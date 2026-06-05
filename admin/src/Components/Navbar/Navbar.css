@@ -1,0 +1,21 @@
+.navbar {
+  display: flex;
+  align-items: center;
+  padding: 15px 40px;
+  background: #fff;
+  border-bottom: 1px solid #eee;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+}
+
+.nav-logo {
+  font-size: 22px;
+  font-weight: 700;
+  color: #333;
+}
+
+.nav-logo span {
+  font-size: 14px;
+  font-weight: 400;
+  color: #ff4141;
+  margin-left: 8px;
+}
