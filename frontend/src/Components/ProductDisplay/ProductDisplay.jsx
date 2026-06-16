@@ -1,21 +1,19 @@
-import React, { useState, useEffect, useContext, useMemo } from "react";
+/* eslint-disable react-hooks/exhaustive-deps */
+import React, { useState, useEffect, useContext } from "react";
 import "./ProductDisplay.css";
 import { ShopContext } from "../../Context/ShopContext";
 
 const ProductDisplay = ({ product }) => {
   const { addToCart } = useContext(ShopContext);
-  const images = useMemo(() => 
-    product.images && product.images.length > 0
-      ? product.images : [product.image],
-    [product.images, product.image]
-  );
+  const images = product.images && product.images.length > 0
+    ? product.images : [product.image];
   const [mainImage, setMainImage] = useState(images[0]);
   const [selectedSize, setSelectedSize] = useState(null);
 
   useEffect(() => {
     setMainImage(images[0]);
     setSelectedSize(null);
-  }, [product.id, images]);
+  }, [product.id]);
 
   return (
     <div className="productdisplay">
