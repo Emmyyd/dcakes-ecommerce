@@ -1,6 +1,6 @@
 import React from "react";
 import "./Popular.css";
-import all_product, { data_product } from "../../Context/data";
+import { data_product } from "../../Context/data";
 import { Link } from "react-router-dom";
 
 const Popular = () => {
