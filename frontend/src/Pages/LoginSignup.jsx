@@ -39,8 +39,8 @@ const LoginSignUp = () => {
     setLoading(true)
 
     const url = state === 'Sign Up'
-      ? 'http://localhost:4000/signup'
-      : 'http://localhost:4000/login'
+      ? 'https://dcakes-ecommerce.onrender.com/signup'
+      : 'https://dcakes-ecommerce.onrender.com/login'
 
     const body = state === 'Sign Up'
       ? {

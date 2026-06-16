@@ -20,7 +20,7 @@ const ShopContextProvider = (props) => {
 
   // ✅ Fetch all products from backend on app start
   useEffect(() => {
-    fetch('http://localhost:4000/allproducts')
+    fetch('https://dcakes-ecommerce.onrender.com/allproducts')
       .then(res => res.json())
       .then(data => {
         setAllProducts(data)
@@ -36,7 +36,7 @@ const ShopContextProvider = (props) => {
   useEffect(() => {
     const token = localStorage.getItem('auth-token')
     if (token) {
-      fetch('http://localhost:4000/getuser', {
+      fetch('https://dcakes-ecommerce.onrender.com/getuser', {
         method: 'GET',
         headers: {
           'auth-token': token
