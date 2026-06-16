@@ -12,7 +12,7 @@ app.use(express.json());
 app.use(cors());
 
 // ✅ DATABASE CONNECTION
-mongoose.connect('mongodb://localhost:27017/dcakes')
+mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/dcakes')
 .then(() => console.log('✅ MongoDB Connected'))
 .catch((err) => console.log('❌ DB Error:', err));
 
