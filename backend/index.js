@@ -12,7 +12,7 @@ app.use(express.json());
 app.use(cors());
 
 // ✅ DATABASE CONNECTION
-mongoose.connect('mongodb+srv://Emmy:Emmydope2@cluster0.teylglq.mongodb.net/dcakes')
+mongoose.connect('mongodb://localhost:27017/dcakes')
 .then(() => console.log('✅ MongoDB Connected'))
 .catch((err) => console.log('❌ DB Error:', err));
 
