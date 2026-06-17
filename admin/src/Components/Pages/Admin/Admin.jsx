@@ -13,7 +13,7 @@ const Admin = () => {
   })
 
   const fetchProducts = async () => {
-    const res = await fetch('http://localhost:4000/allproducts')
+    const res = await fetch('https://dcakes-ecommerce.onrender.com/allproducts')
     const data = await res.json()
     setProducts(data)
   }
@@ -28,11 +28,11 @@ const Admin = () => {
     if (!image) { alert('Please select an image'); return; }
     const formData = new FormData()
     formData.append('product', image)
-    const uploadRes = await fetch('http://localhost:4000/upload', { method: 'POST', body: formData })
+    const uploadRes = await fetch('https://dcakes-ecommerce.onrender.com/upload', { method: 'POST', body: formData })
     const uploadData = await uploadRes.json()
     if (uploadData.success) {
       const product = { ...productDetails, image: uploadData.image_url }
-      const res = await fetch('http://localhost:4000/addproduct', {
+      const res = await fetch('https://dcakes-ecommerce.onrender.com/addproduct', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(product)
@@ -48,7 +48,7 @@ const Admin = () => {
   }
 
   const handleRemove = async (id) => {
-    await fetch('http://localhost:4000/removeproduct', {
+    await fetch('https://dcakes-ecommerce.onrender.com/removeproduct', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ id })
