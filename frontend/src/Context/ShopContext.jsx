@@ -1,11 +1,9 @@
 import React, { createContext, useState, useEffect } from 'react'
 import all_product from './data'
-
 export const ShopContext = createContext(null)
 
 const getDefaultCart = () => {
   let cart = {}
-  // Initialize cart for products
   for (let i = 0; i < 300; i++) {
     cart[i] = 0
   }
@@ -13,10 +11,18 @@ const getDefaultCart = () => {
 }
 
 const ShopContextProvider = (props) => {
-  const [cartItems, setCartItems] = useState(getDefaultCart())
+  const [cartItems, setCartItems] = useState(() => {
+    const saved = localStorage.getItem('cartItems')
+    return saved ? JSON.parse(saved) : getDefaultCart()
+  })
   const [allProducts, setAllProducts] = useState([])
   const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(true)
+
+  // ✅ Save cart to localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem('cartItems', JSON.stringify(cartItems))
+  }, [cartItems])
 
   // ✅ Fetch all products from backend on app start
   useEffect(() => {
@@ -38,9 +44,7 @@ const ShopContextProvider = (props) => {
     if (token) {
       fetch('https://dcakes-ecommerce.onrender.com/getuser', {
         method: 'GET',
-        headers: {
-          'auth-token': token
-        }
+        headers: { 'auth-token': token }
       })
         .then(res => res.json())
         .then(data => {
@@ -57,7 +61,9 @@ const ShopContextProvider = (props) => {
 
   const logout = () => {
     localStorage.removeItem('auth-token')
+    localStorage.removeItem('cartItems')
     setUser(null)
+    setCartItems(getDefaultCart())
     window.location.replace('/')
   }
 
@@ -70,18 +76,18 @@ const ShopContextProvider = (props) => {
   }
 
   const getTotalCartAmount = () => {
-  let totalAmount = 0
-  const productList = allProducts.length > 0 ? allProducts : all_product
-  for (const item in cartItems) {
-    if (cartItems[item] > 0) {
-      let itemInfo = productList.find((product) => product.id === Number(item))
-      if (itemInfo) {
-        totalAmount += cartItems[item] * itemInfo.new_price
+    let totalAmount = 0
+    const productList = allProducts.length > 0 ? allProducts : all_product
+    for (const item in cartItems) {
+      if (cartItems[item] > 0) {
+        let itemInfo = productList.find((product) => product.id === Number(item))
+        if (itemInfo) {
+          totalAmount += cartItems[item] * itemInfo.new_price
+        }
       }
     }
+    return totalAmount
   }
-  return totalAmount
-}
 
   const getTotalCartItems = () => {
     let totalItem = 0
@@ -94,21 +100,18 @@ const ShopContextProvider = (props) => {
   }
 
   const getCartItemDetails = () => {
-  let items = []
-  const productList = allProducts.length > 0 ? allProducts : all_product
-  for (const item in cartItems) {
-    if (cartItems[item] > 0) {
-      let itemInfo = productList.find((product) => product.id === Number(item))
-      if (itemInfo) {
-        items.push({
-          ...itemInfo,
-          quantity: cartItems[item]
-        })
+    let items = []
+    const productList = allProducts.length > 0 ? allProducts : all_product
+    for (const item in cartItems) {
+      if (cartItems[item] > 0) {
+        let itemInfo = productList.find((product) => product.id === Number(item))
+        if (itemInfo) {
+          items.push({ ...itemInfo, quantity: cartItems[item] })
+        }
       }
     }
+    return items
   }
-  return items
-}
 
   const contextValue = {
     allProducts,
