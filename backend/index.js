@@ -1,4 +1,4 @@
-const port = 4000;
+const port = process.env.PORT || 4000;
 const express = require('express');
 const app = express();
 const mongoose = require('mongoose');
@@ -7,9 +7,18 @@ const multer = require('multer');
 const path = require('path');
 const cors = require('cors');
 const bcrypt = require('bcrypt');
+const cloudinary = require('cloudinary').v2;
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
 
 app.use(express.json());
 app.use(cors());
+
+// ✅ CLOUDINARY CONFIG
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET
+});
 
 // ✅ DATABASE CONNECTION
 mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/dcakes')
@@ -21,18 +30,16 @@ app.get('/', (req, res) => {
   res.send('Express App is Running');
 });
 
-// ✅ IMAGE STORAGE ENGINE
-const storage = multer.diskStorage({
-  destination: './upload/images',
-  filename: (req, file, cb) => {
-    return cb(null, `${file.fieldname}_${Date.now()}${path.extname(file.originalname)}`);
-  }
+// ✅ CLOUDINARY STORAGE ENGINE
+const storage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: 'dcakes',
+    allowed_formats: ['jpg', 'jpeg', 'png', 'webp'],
+  },
 });
 
 const upload = multer({ storage: storage });
-
-// ✅ SERVE IMAGES STATICALLY
-app.use('/images', express.static('upload/images'));
 
 // ✅ UPLOAD ENDPOINT
 app.post('/upload', upload.single('product'), (req, res) => {
@@ -41,7 +48,7 @@ app.post('/upload', upload.single('product'), (req, res) => {
   }
   res.json({
     success: 1,
-    image_url: `http://localhost:${port}/images/${req.file.filename}`
+    image_url: req.file.path
   });
 });
 
@@ -117,7 +124,6 @@ app.post('/signup', async (req, res) => {
       return res.status(400).json({ success: false, errors: 'User already exists' });
     }
 
-    // ✅ Hash password
     const salt = await bcrypt.genSalt(10)
     const hashedPassword = await bcrypt.hash(req.body.password, salt)
 
@@ -151,7 +157,6 @@ app.post('/login', async (req, res) => {
       return res.json({ success: false, errors: 'Wrong email address' });
     }
 
-    // ✅ Compare hashed password
     const passMatch = await bcrypt.compare(req.body.password, user.password)
     if (!passMatch) {
       return res.json({ success: false, errors: 'Wrong password' });
